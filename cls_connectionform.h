@@ -7,8 +7,9 @@
 class cls_connectionForm : public QWidget
 {
     Q_OBJECT
+
 public:
-    explicit cls_connectionForm(QWidget *parent = nullptr);
+     cls_connectionForm(QWidget *parent = nullptr);
     ~cls_connectionForm();
     QLineEdit* nameDB;
     QLineEdit* nameUser;
@@ -17,6 +18,7 @@ public:
     QLineEdit* Password;
     QDockWidget* dck_formConnection;
     QPushButton* pbtnConnect;
+signals:
 };
 
 #endif // CLS_CONNECTIONFORM_H

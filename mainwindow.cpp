@@ -20,14 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
     menuBar()->addMenu(pmnuFAQ);
 
 
-    connect(&btn_add_order,SIGNAL(clicked()),this,SLOT(slot_add_order()));
-    connect(&btn_remove_order,SIGNAL(clicked()),this,SLOT(slot_remove_order()));
-    connect(&btn_add_order_from_file,SIGNAL(clicked()),this,SLOT(slot_add_order_from_file()));
-    connect(&btn_fill_materials_stock,SIGNAL(clicked()),this,SLOT(slot_fill_materials_stock()));
+    connect(&btn_add_order,SIGNAL(clicked()),this,SLOT(slot_create_add_order_form()));
+    connect(&btn_remove_order,SIGNAL(clicked()),this,SLOT(slot_create_remove_order_form()));
+    //connect(&btn_add_order_from_file,SIGNAL(clicked()),this,SLOT(slot_add_order_from_file()));
+    connect(&btn_fill_materials_stock,SIGNAL(clicked()),this,SLOT(slot_create_fill_materials_stock_form()));
+    connect(this,SIGNAL(need_update_view()),this, SLOT(slot_update_view()));
 
     btn_add_order.setText("Добавить заказ");
     btn_remove_order.setText("Удалить заказ");
-    btn_add_order_from_file.setText("Добавить заказ с файла");
+    //btn_add_order_from_file.setText("Добавить заказ с файла");
     btn_fill_materials_stock.setText("Заполнить склад материалов");
 
     layout.addWidget(new QLabel("Учет заказов"),0,0,1,1);
@@ -47,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     layout.addWidget(&view_stocks,3,2,1,1);
 
     layout.addWidget(&btn_add_order,4,0,1,1);
-    layout.addWidget(&btn_add_order_from_file,5,0,1,1);
+    //layout.addWidget(&btn_add_order_from_file,5,0,1,1);
     layout.addWidget(&btn_remove_order,4,1,1,1);
     layout.addWidget(&btn_fill_materials_stock,4,2,1,1);
     wgt_body =new QWidget();
@@ -82,25 +83,67 @@ void MainWindow::slot_connect_to_serv(){
     connection_form->dck_formConnection->close();
 }
 
-void MainWindow::slot_add_order(){
+//создание окна добавления заказа
+void MainWindow::slot_create_add_order_form(){
     statusBar()->clearMessage();
+    add_order_form = new cls_add_order_form();
+    add_order_form->show();
+    connect(add_order_form,SIGNAL(need_add_order(const QString&, const QString&,const QString&,const QString&,const QString&)),
+            this,SLOT(slot_add_order(const QString&,const QString&,const QString&,const QString&,const QString&)) );
     statusBar()->showMessage("Добавление заказа");
 }
 
-void MainWindow::slot_add_order_from_file(){
+
+//добавление заказа
+void MainWindow::slot_add_order(const QString& date, const QString& size,const QString& name,const QString& surname,const QString& patronymic){
     statusBar()->clearMessage();
-    statusBar()->showMessage("Добавление заказа с файла");
+    statusBar()->showMessage("Попытка добавить заказ");
+    //здесь будет код добавления заказа
+    emit need_update_view();
+    qDebug()<<date;
 }
 
-void MainWindow::slot_remove_order(){
+//создание окна удаления заказа
+void MainWindow::slot_create_remove_order_form(){
     statusBar()->clearMessage();
-    statusBar()->showMessage("Удаление заказа");
+    statusBar()->showMessage("удаление заказа");
+    remove_order_form = new cls_RemoveOrderForm();
+    remove_order_form->show();
+    connect(remove_order_form,SIGNAL(need_remove_order(const QString&)),this,SLOT(slot_remove_order(const QString&)));
+
 }
 
-void MainWindow::slot_fill_materials_stock(){
+//удаление заказа
+void MainWindow::slot_remove_order(const QString& order_num){
     statusBar()->clearMessage();
-    statusBar()->showMessage("Удаление заказа");
+    statusBar()->showMessage("Попытка удаления заказа");
+    qDebug()<<order_num;
+    //здесь будет код удаления заказа
+    emit need_update_view();
 }
+
+//создание окна заполнения склада
+void MainWindow::slot_create_fill_materials_stock_form(){
+    statusBar()->clearMessage();
+    statusBar()->showMessage("Заполнение склада материалов");
+    fill_materials_stock_from = new cls_fill_materials_stock_from();
+    fill_materials_stock_from->show();
+    connect(fill_materials_stock_from,SIGNAL(need_fill_matereals_stock(const QString&,const QString&,const QString&)),
+            this, SLOT(slot_fill_materials_stock(const QString& stock,const QString& size,const QString&)));
+}
+
+//заполнение склада
+void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& size,const QString&){
+    statusBar()->clearMessage();
+    statusBar()->showMessage("Заполнение склада материалов");
+    //здесь будет код заполнения склада
+    emit need_update_view();
+}
+
+void MainWindow::slot_update_view(){
+    qDebug()<<"\nneed update view";
+}
+
 
 MainWindow::~MainWindow()
 {

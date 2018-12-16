@@ -27,11 +27,17 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    cls_connectionform.cpp
+    cls_connectionform.cpp \
+    cls_add_order_form.cpp \
+    cls_removeorderform.cpp \
+    cls_fill_materials_stock_from.cpp
 
 HEADERS += \
         mainwindow.h \
-    cls_connectionform.h
+    cls_connectionform.h \
+    cls_adding_order_form.h \
+    cls_removeorderform.h \
+    cls_fill_materials_stock_from.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

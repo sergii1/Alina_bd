@@ -40,7 +40,7 @@ cls_connectionForm::cls_connectionForm(QWidget *parent):QWidget(parent){
     QWidget* Connection = new QWidget;
     Connection->setLayout(m_VLayout);
     dck_formConnection->setWidget(Connection);
-
+    setFixedWidth(500);
 }
 
 cls_connectionForm::~cls_connectionForm(){
