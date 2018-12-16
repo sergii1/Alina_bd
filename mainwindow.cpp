@@ -129,11 +129,11 @@ void MainWindow::slot_create_fill_materials_stock_form(){
     fill_materials_stock_from = new cls_fill_materials_stock_from();
     fill_materials_stock_from->show();
     connect(fill_materials_stock_from,SIGNAL(need_fill_matereals_stock(const QString&,const QString&,const QString&)),
-            this, SLOT(slot_fill_materials_stock(const QString& stock,const QString& size,const QString&)));
+            this, SLOT(slot_fill_materials_stock(const QString& ,const QString& ,const QString&)));
 }
 
 //заполнение склада
-void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& size,const QString&){
+void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& size,const QString& amount){
     statusBar()->clearMessage();
     statusBar()->showMessage("Заполнение склада материалов");
     //здесь будет код заполнения склада

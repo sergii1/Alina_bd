@@ -50,7 +50,7 @@ private slots:
 
     void slot_add_order(const QString&,const QString&,const QString&,const QString&,const QString&);
     void slot_remove_order(const QString&);
-    void slot_fill_materials_stock(const QString&,const QString&,const QString&);
+    void slot_fill_materials_stock(const QString& ,const QString& ,const QString&);
 };
 
 #endif // MAINWINDOW_H

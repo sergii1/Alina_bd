@@ -6,7 +6,9 @@ cls_fill_materials_stock_from::cls_fill_materials_stock_from(QWidget *parent) : 
     setWindowFlags (windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle("Добавление заказа");
     QStringList stoks_list;
+    stoks_list<<"1"<<"2";
     QStringList sizes_list;
+    sizes_list<<"35"<<"30";
     stockNumber.addItems(stoks_list);
     sizes.addItems(sizes_list);
     submit.setText("submit");
@@ -16,8 +18,11 @@ cls_fill_materials_stock_from::cls_fill_materials_stock_from(QWidget *parent) : 
     layout.addWidget(&sizes,0,Qt::AlignHCenter);
     layout.addWidget(new QLabel("введите количество"),0,Qt::AlignHCenter);
     layout.addWidget(&amount,0,Qt::AlignHCenter);
+    layout.addWidget(&submit,0,Qt::AlignHCenter);
     setLayout(&layout);
     connect(&submit,SIGNAL(clicked()),this,SLOT(slot_submit_clicked()));
+    setFixedSize(300,250);
+
 }
 
 void cls_fill_materials_stock_from::slot_submit_clicked(){
