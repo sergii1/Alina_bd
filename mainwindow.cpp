@@ -55,6 +55,14 @@ MainWindow::MainWindow(QWidget *parent)
     wgt_body->setLayout(&layout);
     setCentralWidget(wgt_body);
 
+    view_order_accauning.setModel(&model_order_accauning);
+    view_operation_status.setModel(&model_operation_status);
+    view_stock_status.setModel(&model_stock_status);
+    view_sizes.setModel(&model_sizes);
+    view_operations.setModel(&model_operations);
+    view_stocks.setModel(&model_stocks);
+
+
 }
 
 void MainWindow::slot_create_connect_form(){
@@ -79,7 +87,9 @@ void MainWindow::slot_connect_to_serv(){
         pmbx->show();
         statusBar()->showMessage("ошибка открытия БД", 3000);
      }
-    else statusBar()->showMessage("БД открыта успешна", 3000);
+    else {statusBar()->showMessage("БД открыта успешна", 3000);
+        emit need_update_view();
+    }
     connection_form->dck_formConnection->close();
 }
 
@@ -124,9 +134,20 @@ void MainWindow::slot_remove_order(const QString& order_num){
 
 //создание окна заполнения склада
 void MainWindow::slot_create_fill_materials_stock_form(){
+    QStringList stock_list;
+    QStringList size_list;
+    QSqlQuery query("select size from size");
+    if(query.isActive())
+        while (query.next())
+                   size_list<<query.value(0).toString();
+    QSqlQuery query1("select number from store");
+    if(query1.isActive())
+          while (query1.next())
+                     stock_list<<query1.value(0).toString();
+
     statusBar()->clearMessage();
     statusBar()->showMessage("Заполнение склада материалов");
-    fill_materials_stock_from = new cls_fill_materials_stock_from();
+    fill_materials_stock_from = new cls_fill_materials_stock_from(stock_list,size_list);
     fill_materials_stock_from->show();
     connect(fill_materials_stock_from,SIGNAL(need_fill_matereals_stock(const QString&,const QString&,const QString&)),
             this, SLOT(slot_fill_materials_stock(const QString& ,const QString& ,const QString&)));
@@ -137,11 +158,20 @@ void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& s
     statusBar()->clearMessage();
     statusBar()->showMessage("Заполнение склада материалов");
     //здесь будет код заполнения склада
+    qDebug()<<"insert into storehouse(numberofstore,size,amount) values("+stock+size+amount+");";
+    model_stock_status.setQuery("insert into storehouse(numberofstore,size,amount) values("+stock+","size+amount+");" );
     emit need_update_view();
 }
 
 void MainWindow::slot_update_view(){
     qDebug()<<"\nneed update view";
+    model_order_accauning.setQuery("select * from list");
+    model_operations.setQuery("select * from operation");
+    model_operation_status.setQuery("select * from operations");
+    model_sizes.setQuery("select * from size");
+    model_stocks.setQuery("select * from store");
+    model_stock_status.setQuery("select * from storehouse");
+
 }
 
 

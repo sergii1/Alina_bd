@@ -8,7 +8,7 @@ class cls_fill_materials_stock_from : public QDialog
 {
     Q_OBJECT
 public:
-    explicit cls_fill_materials_stock_from(QWidget *parent = nullptr);
+    explicit cls_fill_materials_stock_from(QStringList& stoks_list, QStringList& sizes_list,QWidget *parent = nullptr);
     QComboBox stockNumber;
     QComboBox sizes;
     QLineEdit amount;

@@ -26,6 +26,13 @@ private:
     QTableView view_operations;
     QTableView view_stocks;
 
+    QSqlQueryModel model_order_accauning;
+    QSqlQueryModel model_operation_status;
+    QSqlQueryModel model_stock_status;
+    QSqlQueryModel model_sizes;
+    QSqlQueryModel model_operations;
+    QSqlQueryModel model_stocks;
+
     QPushButton btn_add_order;
     QPushButton btn_remove_order;
     QPushButton btn_add_order_from_file;

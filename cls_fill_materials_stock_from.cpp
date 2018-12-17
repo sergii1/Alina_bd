@@ -1,14 +1,10 @@
 #include "cls_fill_materials_stock_from.h"
 
-cls_fill_materials_stock_from::cls_fill_materials_stock_from(QWidget *parent) : QDialog (parent)
+cls_fill_materials_stock_from::cls_fill_materials_stock_from(QStringList& stoks_list, QStringList& sizes_list, QWidget *parent) : QDialog (parent)
 {
     setModal(true);
     setWindowFlags (windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle("Добавление заказа");
-    QStringList stoks_list;
-    stoks_list<<"1"<<"2";
-    QStringList sizes_list;
-    sizes_list<<"35"<<"30";
     stockNumber.addItems(stoks_list);
     sizes.addItems(sizes_list);
     submit.setText("submit");
