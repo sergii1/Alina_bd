@@ -196,7 +196,7 @@ void MainWindow::slot_create_fill_materials_stock_form(){
 void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& size,const QString& amount){
     statusBar()->clearMessage();
     //qDebug()<<"update storehouse set amount = "+ amount+" where numberofstore = "+ stock+ " and size = "+ size+ ";";
-    QSqlQuery query = db.exec("update storehouse set amount = "+ amount+" where numberofstore = '"+ stock+ "' and size = '"+ size+ "';" );
+    QSqlQuery query = db.exec("update storehouse set amount = amount + "+ amount+" where numberofstore = '"+ stock+ "' and size = '"+ size+ "';" );
     if(query.isActive()){
        // qDebug()<<"ok";
         statusBar()->showMessage("Заполнение склада материалов прошло успешно",3000);
@@ -217,6 +217,12 @@ void MainWindow::slot_update_view(){
     model_sizes.setQuery("select * from size",db);
     model_stocks.setQuery("select * from store",db);
     model_stock_status.setQuery("select * from storehouse",db);
+
+    view_order_accauning.setColumnWidth(0, 100);
+    view_order_accauning.setColumnWidth(1, 100);
+    view_order_accauning.setColumnWidth(3, 20);
+    view_order_accauning.setColumnWidth(4, 100);
+
 
 }
 
