@@ -1,11 +1,12 @@
 #include "cls_adding_order_form.h"
 
-cls_add_order_form::cls_add_order_form(QWidget *parent) : QDialog(parent)
+cls_add_order_form::cls_add_order_form(QStringList& size_list,QWidget *parent) : QDialog(parent)
 {
     setModal(true);
     setWindowFlags (windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle("Добавление заказа");
     submit.setText("submit");
+    size.addItems(size_list);
 
     layout.addWidget(new QLabel("дата заказа"),0,Qt::AlignHCenter);
     layout.addWidget(&date,0,Qt::AlignHCenter);
@@ -19,8 +20,8 @@ cls_add_order_form::cls_add_order_form(QWidget *parent) : QDialog(parent)
     layout.addWidget(new QLabel("Фамилия заказчика"),0,Qt::AlignHCenter);
     layout.addWidget(&surname,0,Qt::AlignHCenter);
 
-    layout.addWidget(new QLabel("Отчество заказчика"),0,Qt::AlignHCenter);
-    layout.addWidget(&patronymic,0,Qt::AlignHCenter);
+    layout.addWidget(new QLabel("Номер заказчика"),0,Qt::AlignHCenter);
+    layout.addWidget(&phone,0,Qt::AlignHCenter);
 
     layout.addWidget(&submit,0, Qt::AlignHCenter);
     this->setLayout(&layout);
@@ -30,8 +31,8 @@ cls_add_order_form::cls_add_order_form(QWidget *parent) : QDialog(parent)
 
 void cls_add_order_form::slot_submit_clicked(){
 
-    if(!date.text().isEmpty() && !size.text().isEmpty() && !name.text().isEmpty() && !surname.text().isEmpty() &&!patronymic.text().isEmpty()){
-        emit need_add_order(date.text(),size.text(),name.text(),surname.text(),patronymic.text());
+    if(!date.text().isEmpty() && !size.currentText().isEmpty() && !name.text().isEmpty() && !surname.text().isEmpty() &&!phone.text().isEmpty()){
+        emit need_add_order(date.text(),size.currentText(),name.text()+surname.text()+phone.text());
         close();
     }
 }

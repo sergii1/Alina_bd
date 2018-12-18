@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     view_sizes.setModel(&model_sizes);
     view_operations.setModel(&model_operations);
     view_stocks.setModel(&model_stocks);
-
+    connect(&view_operation_status,SIGNAL (doubleClicked (QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
 
 }
 
@@ -96,40 +96,75 @@ void MainWindow::slot_connect_to_serv(){
 //создание окна добавления заказа
 void MainWindow::slot_create_add_order_form(){
     statusBar()->clearMessage();
-    add_order_form = new cls_add_order_form();
+
+    QStringList size_list;
+    QSqlQuery query("select size from size");
+    if(query.isActive()){
+        while (query.next())
+                   size_list<<query.value(0).toString();
+
+    add_order_form = new cls_add_order_form(size_list);
     add_order_form->show();
-    connect(add_order_form,SIGNAL(need_add_order(const QString&, const QString&,const QString&,const QString&,const QString&)),
-            this,SLOT(slot_add_order(const QString&,const QString&,const QString&,const QString&,const QString&)) );
+    connect(add_order_form,SIGNAL(need_add_order(const QString&, const QString&,const QString&)),
+            this,SLOT(slot_add_order(const QString&,const QString&,const QString&)) );
     statusBar()->showMessage("Добавление заказа");
+    }
+    else statusBar()->showMessage("Ошибка, проверьте подключене к базе данных",3000);
 }
 
 
-//добавление заказа
-void MainWindow::slot_add_order(const QString& date, const QString& size,const QString& name,const QString& surname,const QString& patronymic){
+//добавление заказа надо тестить
+void MainWindow::slot_add_order(const QString& date, const QString& size,const QString& comment){
     statusBar()->clearMessage();
-    statusBar()->showMessage("Попытка добавить заказ");
-    //здесь будет код добавления заказа
-    emit need_update_view();
-    qDebug()<<date;
+    QString number = generate_order_number();
+    QString cmd = "insert into list(number, data, comment, size, condition)"
+                  "values('"+number+"','" +date+"','"+ comment+"',"+size +", 'inprocess');";
+    qDebug()<<"cmd = "<<cmd;
+
+    QSqlQuery query = db.exec(cmd);
+    if(query.isActive()){
+        statusBar()->showMessage("Добавление заказа прошло успешно",3000);
+        emit need_update_view();
+    }
+    else{
+        statusBar()->showMessage("Во время добавления произошла ошибка, попробуйте снова",3000);
+        qDebug()<<query.lastError().text();
+    }
+
 }
 
 //создание окна удаления заказа
 void MainWindow::slot_create_remove_order_form(){
     statusBar()->clearMessage();
-    statusBar()->showMessage("удаление заказа");
-    remove_order_form = new cls_RemoveOrderForm();
+    QStringList order_list;
+    QSqlQuery query("select number from list");
+    if(query.isActive()){
+        while (query.next())
+                   order_list<<query.value(0).toString();
+    remove_order_form = new cls_RemoveOrderForm(order_list);
+
     remove_order_form->show();
     connect(remove_order_form,SIGNAL(need_remove_order(const QString&)),this,SLOT(slot_remove_order(const QString&)));
-
+    statusBar()->showMessage("удаление заказа",3000);
+    }
+    else statusBar()->showMessage("Ошибка, проверьте подключене к базе данных",3000);
 }
 
 //удаление заказа
 void MainWindow::slot_remove_order(const QString& order_num){
     statusBar()->clearMessage();
     statusBar()->showMessage("Попытка удаления заказа");
-    qDebug()<<order_num;
-    //здесь будет код удаления заказа
-    emit need_update_view();
+    qDebug()<<"delete from list where number = '"+order_num+"';";
+    QSqlQuery query = db.exec("delete from list where number = '"+order_num+"';");
+    if(query.isActive()){
+        statusBar()->clearMessage();
+        statusBar()->showMessage("Удаление заказа прошло успешно",3000);
+        emit need_update_view();
+    }
+    else{
+        qDebug()<<query.lastError().text();
+        statusBar()->showMessage("Во время удаления произошла ошибка, попробуйте снова",3000);
+    }
 }
 
 //создание окна заполнения склада
@@ -137,13 +172,14 @@ void MainWindow::slot_create_fill_materials_stock_form(){
     QStringList stock_list;
     QStringList size_list;
     QSqlQuery query("select size from size");
-    if(query.isActive())
+    QSqlQuery query1("select number from store");
+
+    if(query.isActive()&&query1.isActive()){
         while (query.next())
                    size_list<<query.value(0).toString();
-    QSqlQuery query1("select number from store");
-    if(query1.isActive())
-          while (query1.next())
-                     stock_list<<query1.value(0).toString();
+
+        while (query1.next())
+                    stock_list<<query1.value(0).toString();
 
     statusBar()->clearMessage();
     statusBar()->showMessage("Заполнение склада материалов");
@@ -151,30 +187,80 @@ void MainWindow::slot_create_fill_materials_stock_form(){
     fill_materials_stock_from->show();
     connect(fill_materials_stock_from,SIGNAL(need_fill_matereals_stock(const QString&,const QString&,const QString&)),
             this, SLOT(slot_fill_materials_stock(const QString& ,const QString& ,const QString&)));
+    }
+    else statusBar()->showMessage("Ошибка, проверьте подключене к базе данных",3000);
+
 }
 
 //заполнение склада
 void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& size,const QString& amount){
     statusBar()->clearMessage();
-    statusBar()->showMessage("Заполнение склада материалов");
-    //здесь будет код заполнения склада
-    qDebug()<<"insert into storehouse(numberofstore,size,amount) values("+stock+size+amount+");";
-    model_stock_status.setQuery("insert into storehouse(numberofstore,size,amount) values("+stock+","size+amount+");" );
-    emit need_update_view();
+    //qDebug()<<"update storehouse set amount = "+ amount+" where numberofstore = "+ stock+ " and size = "+ size+ ";";
+    QSqlQuery query = db.exec("update storehouse set amount = "+ amount+" where numberofstore = '"+ stock+ "' and size = '"+ size+ "';" );
+    if(query.isActive()){
+       // qDebug()<<"ok";
+        statusBar()->showMessage("Заполнение склада материалов прошло успешно",3000);
+        emit need_update_view();
+    }
+    else{
+        statusBar()->showMessage("Ошибка при заполнении склада материалов",3000);
+        qDebug()<<query.lastError().text();
+    }
+
 }
 
 void MainWindow::slot_update_view(){
-    qDebug()<<"\nneed update view";
-    model_order_accauning.setQuery("select * from list");
-    model_operations.setQuery("select * from operation");
-    model_operation_status.setQuery("select * from operations");
-    model_sizes.setQuery("select * from size");
-    model_stocks.setQuery("select * from store");
-    model_stock_status.setQuery("select * from storehouse");
+   // qDebug()<<"\nneed update view";
+    model_order_accauning.setQuery("select * from list",db);
+    model_operations.setQuery("select * from operation",db);
+    model_operation_status.setQuery("select * from operations",db);
+    model_sizes.setQuery("select * from size",db);
+    model_stocks.setQuery("select * from store",db);
+    model_stock_status.setQuery("select * from storehouse",db);
 
 }
 
+//надо допилить и протестить двойной щелчек
+void MainWindow::slot_change_order_status(QModelIndex index){
+    qDebug()<<"change order status";
+    qDebug()<<index.row();
+    qDebug()<<index.column();
+    QModelIndex indID = view_operation_status.model()->index(index.row(),0);
+    QModelIndex indNumber = view_operation_status.model()->index(index.row(),1);
+    QString comand ;//"update operation_list set state = 'done' where OrdNumber_operat = '" + indID.data().toString() + "' and op_descr = '" + indNumber.data().toString()+"'" ;
+    qDebug()<<comand;
+    QSqlQuery query = db.exec(comand);
+    if(query.isActive()){
+        statusBar()->showMessage("изменение статуса заказа прошло успешно",3000);
+        emit need_update_view();
+    }
+    else{
+        statusBar()->showMessage("ошибка изменения статуса заказа",3000);
+        qDebug()<<query.lastError().text();
+    }
 
+}
+
+QString MainWindow::generate_order_number(){
+    QStringList order_list;
+    QSqlQuery query("select number from list;");
+    if(query.isActive())
+        while (query.next()){
+                   order_list<<query.value(0).toString();
+                   qDebug()<<query.value(0).toString();
+        }
+    else qDebug()<<query.lastError().text();
+
+    QString res;
+    do {
+        res = "#";
+        for(int i = 0; i<8; ++i)
+            res = res + QString(std::to_string(rand()%10).c_str());
+            qDebug()<<res;
+
+    }while(order_list.contains(res));
+    return res;
+}
 MainWindow::~MainWindow()
 {
     db.close();

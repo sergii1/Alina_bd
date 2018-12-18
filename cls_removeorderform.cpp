@@ -1,14 +1,12 @@
 #include "cls_removeorderform.h"
 
-cls_RemoveOrderForm::cls_RemoveOrderForm(QWidget *parent) : QDialog(parent)
+cls_RemoveOrderForm::cls_RemoveOrderForm(QStringList& order_nums,QWidget *parent) : QDialog(parent)
 {
     setWindowTitle("Удаление заказа");
     setModal(true);
     setWindowFlags (windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    submit.setText("submit");
-    QStringList nums;
-    nums<<"1"<<"2"<<"3";
-    orderNums.addItems(nums);
+    submit.setText("submit");    
+    orderNums.addItems(order_nums);
     layout.addWidget(new QLabel("Выберите номер удаляемого заказа"),0,Qt::AlignHCenter);
     layout.addWidget(&orderNums,0,Qt::AlignHCenter);
     layout.addWidget(&submit,0,Qt::AlignHCenter);

@@ -8,7 +8,7 @@ class cls_RemoveOrderForm : public QDialog
 {
     Q_OBJECT
 public:
-    explicit cls_RemoveOrderForm(QWidget *parent = nullptr);
+    explicit cls_RemoveOrderForm(QStringList& order_nums ,QWidget *parent = nullptr);
 
 signals:
     void need_remove_order(const QString&);

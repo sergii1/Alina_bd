@@ -8,17 +8,17 @@ class cls_add_order_form : public QDialog
 {
     Q_OBJECT
 public:
-    explicit cls_add_order_form(QWidget *parent = nullptr);
+    explicit cls_add_order_form(QStringList& size_list,QWidget *parent = nullptr);
 
 signals:
-    void need_add_order(const QString&, const QString&,const QString&,const QString&,const QString&);
+    void need_add_order(const QString&, const QString&,const QString&);
 
 private:
     QLineEdit date;
-    QLineEdit size;
+    QComboBox size;
     QLineEdit name;
     QLineEdit surname;
-    QLineEdit patronymic;
+    QLineEdit phone;
     QPushButton submit;
     QVBoxLayout layout;
     QDockWidget* dck_wgt;

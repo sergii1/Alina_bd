@@ -43,6 +43,8 @@ private:
     cls_add_order_form* add_order_form;
     cls_RemoveOrderForm* remove_order_form;
     cls_fill_materials_stock_from* fill_materials_stock_from;
+
+    QString generate_order_number();
 signals:
     void need_update_view();
 private slots:
@@ -55,9 +57,11 @@ private slots:
     //void slot_add_order_from_file();
     void slot_create_fill_materials_stock_form();
 
-    void slot_add_order(const QString&,const QString&,const QString&,const QString&,const QString&);
+    void slot_add_order(const QString&,const QString&,const QString&);
     void slot_remove_order(const QString&);
     void slot_fill_materials_stock(const QString& ,const QString& ,const QString&);
+
+    void slot_change_order_status(QModelIndex);
 };
 
 #endif // MAINWINDOW_H
