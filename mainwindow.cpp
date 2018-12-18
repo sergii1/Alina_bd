@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent)
     view_sizes.setModel(&model_sizes);
     view_operations.setModel(&model_operations);
     view_stocks.setModel(&model_stocks);
-    connect(&view_operation_status,SIGNAL (doubleClicked (QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
+    connect(&view_operation_status,SIGNAL (doubleClicked(QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
 
 }
 
@@ -233,7 +233,7 @@ void MainWindow::slot_change_order_status(QModelIndex index){
     qDebug()<<index.column();
     QModelIndex indID = view_operation_status.model()->index(index.row(),0);
     QModelIndex indNumber = view_operation_status.model()->index(index.row(),1);
-    QString comand ;//"update operation_list set state = 'done' where OrdNumber_operat = '" + indID.data().toString() + "' and op_descr = '" + indNumber.data().toString()+"'" ;
+    QString comand = "update operations set condition = 'ready' where numberoflist = '" + indID.data().toString() + "' and number = '" + indNumber.data().toString()+"'" ;
     qDebug()<<comand;
     QSqlQuery query = db.exec(comand);
     if(query.isActive()){
