@@ -16,6 +16,7 @@ public:
     ~roleInputDialog();
     static QString getRole();
     static QString role;
+
 private slots:
     void on_pushButton_clicked();
 

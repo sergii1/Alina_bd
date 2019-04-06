@@ -2,8 +2,7 @@
 #include "ui_roleinputdialog.h"
 #include "QDebug"
 
-QString roleInputDialog::role = "";
-
+QString roleInputDialog::role = "admin";
 roleInputDialog::roleInputDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::roleInputDialog)
@@ -18,6 +17,7 @@ roleInputDialog::~roleInputDialog()
 
 QString roleInputDialog::getRole(){
      roleInputDialog dialog;
+     dialog.ui->comboBox->setCurrentText(role);
      dialog.setWindowTitle("Выберите роль");
      dialog.exec();
      return role;
