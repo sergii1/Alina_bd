@@ -8,6 +8,8 @@
 #include "cls_adding_order_form.h"
 #include "cls_removeorderform.h"
 #include "cls_fill_materials_stock_from.h"
+#include "roleinputdialog.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -17,7 +19,9 @@ public:
     ~MainWindow();
 private:
     QSqlDatabase db;
-    QGridLayout layout;
+    QGridLayout* layout;
+
+    QAction* chooseRole;
 
     QTableView view_order_accauning;
     QTableView view_operation_status;
@@ -26,6 +30,14 @@ private:
     QTableView view_operations;
     QTableView view_stocks;
 
+    QTableView view_order_accauning1;
+    QTableView view_operation_status1;
+    QTableView view_stock_status1;
+    QTableView view_sizes1;
+    QTableView view_operations1;
+    QTableView view_stocks1;
+    QTableView view_order_accauning2;
+
     QSqlQueryModel model_order_accauning;
     QSqlQueryModel model_operation_status;
     QSqlQueryModel model_stock_status;
@@ -33,21 +45,41 @@ private:
     QSqlQueryModel model_operations;
     QSqlQueryModel model_stocks;
 
+    QSqlQueryModel model_order_accauning1;
+    QSqlQueryModel model_operation_status1;
+    QSqlQueryModel model_stock_status1;
+    QSqlQueryModel model_sizes1;
+    QSqlQueryModel model_operations1;
+    QSqlQueryModel model_stocks1;
+    QSqlQueryModel model_order_accauning2;
+
     QPushButton btn_add_order;
     QPushButton btn_remove_order;
     QPushButton btn_add_order_from_file;
     QPushButton btn_fill_materials_stock;
 
-    QWidget* wgt_body;
+    QPushButton btn_add_order1;
+    QPushButton btn_remove_order1;
+    QPushButton btn_add_order_from_file1;
+    QPushButton btn_fill_materials_stock1;
+
+    QPushButton btn_remove_order2;
+    QPushButton btn_remove_order3;
+
+    QStackedLayout* stack_layout;
+
     cls_connectionForm* connection_form;
     cls_add_order_form* add_order_form;
     cls_RemoveOrderForm* remove_order_form;
     cls_fill_materials_stock_from* fill_materials_stock_from;
-
     QString generate_order_number();
+
+    void setDisplayTables(const QString& role_name);
+    void initStackLayout();
 signals:
     void need_update_view();
 private slots:
+    void slot_change_role();
     void slot_update_view();
     void slot_connect_to_serv();
     void slot_create_connect_form();

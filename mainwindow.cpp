@@ -3,22 +3,30 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    QDesktopWidget dsk;
+    QSize size = dsk.availableGeometry().size();
+    size.setHeight(size.height()-45);
+    resize(size);
+    qDebug()<<this->size();
+
     setWindowIcon(QIcon(":sql.jpg"));
-
-    QMenu* pmnuFile = new QMenu("&Connect");
+    QMenu* pmnuFile = new QMenu("&Open");
     pmnuFile->addAction("&Connect to server...", this, SLOT(slot_create_connect_form()), QKeySequence("CTRL+O"));
+    chooseRole = new QAction("Выбрать роль");
+    chooseRole->setDisabled(true);
+    chooseRole->setShortcut(QKeySequence("CTRL+R"));
+    connect(chooseRole, SIGNAL(triggered(bool)), this, SLOT(slot_change_role()));
+    pmnuFile->addAction(chooseRole);
     menuBar()->addMenu(pmnuFile);
-
     connection_form = new cls_connectionForm();
     connection_form->dck_formConnection->setWindowTitle(("Подключение к БД"));
     connect(connection_form->pbtnConnect,SIGNAL(clicked()), this, SLOT(slot_connect_to_serv()));
-
     QMenu* pmnuFAQ = new QMenu("Справка");
     pmnuFAQ->addAction("О программе", this, [](){QMessageBox::about(nullptr, "О программе", "Лабораторная работа №3-4\n"
                                                                                             "по дисциплине базы данных\n"
                                                                                             "Юн Алина (ФН11-33)\nКороткова Анна (ФН11-33)");});
-    menuBar()->addMenu(pmnuFAQ);
 
+    menuBar()->addMenu(pmnuFAQ);
 
     connect(&btn_add_order,SIGNAL(clicked()),this,SLOT(slot_create_add_order_form()));
     connect(&btn_remove_order,SIGNAL(clicked()),this,SLOT(slot_create_remove_order_form()));
@@ -26,34 +34,32 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&btn_fill_materials_stock,SIGNAL(clicked()),this,SLOT(slot_create_fill_materials_stock_form()));
     connect(this,SIGNAL(need_update_view()),this, SLOT(slot_update_view()));
 
+    connect(&btn_add_order1,SIGNAL(clicked()),this,SLOT(slot_create_add_order_form()));
+    connect(&btn_remove_order1,SIGNAL(clicked()),this,SLOT(slot_create_remove_order_form()));
+    connect(&btn_remove_order2,SIGNAL(clicked()),this,SLOT(slot_create_remove_order_form()));
+    connect(&btn_remove_order3,SIGNAL(clicked()),this,SLOT(slot_create_remove_order_form()));
+
+    //connect(&btn_add_order_from_file,SIGNAL(clicked()),this,SLOT(slot_add_order_from_file()));
+    connect(&btn_fill_materials_stock1,SIGNAL(clicked()),this,SLOT(slot_create_fill_materials_stock_form()));
+
     btn_add_order.setText("Добавить заказ");
     btn_remove_order.setText("Удалить заказ");
+    btn_add_order1.setText("Добавить заказ");
+    btn_remove_order1.setText("Удалить заказ");
+    btn_remove_order2.setText("Удалить заказ");
+    btn_remove_order3.setText("Удалить заказ");
     //btn_add_order_from_file.setText("Добавить заказ с файла");
     btn_fill_materials_stock.setText("Заполнить склад материалов");
+    btn_fill_materials_stock1.setText("Заполнить склад материалов");
 
-    layout.addWidget(new QLabel("Учет заказов"),0,0,1,1);
-    layout.addWidget(new QLabel("Состояние операций"),0,1,1,1);
-    layout.addWidget(new QLabel("Состояние складов"),0,2,1,1);
 
-    layout.addWidget(&view_order_accauning,1,0,1,1);
-    layout.addWidget(&view_operation_status,1,1,1,1);
-    layout.addWidget(&view_stock_status,1,2,1,1);
-
-    layout.addWidget(new QLabel("Размеры"),2,0,1,1);
-    layout.addWidget(new QLabel("Операции"),2,1,1,1);
-    layout.addWidget(new QLabel("Склады"),2,2,1,1);
-
-    layout.addWidget(&view_sizes,3,0,1,1);
-    layout.addWidget(&view_operations,3,1,1,1);
-    layout.addWidget(&view_stocks,3,2,1,1);
-
-    layout.addWidget(&btn_add_order,4,0,1,1);
-    //layout.addWidget(&btn_add_order_from_file,5,0,1,1);
-    layout.addWidget(&btn_remove_order,4,1,1,1);
-    layout.addWidget(&btn_fill_materials_stock,4,2,1,1);
-    wgt_body =new QWidget();
-    wgt_body->setLayout(&layout);
-    setCentralWidget(wgt_body);
+//    QString role = roleInputDialog::getRole();
+    stack_layout = new QStackedLayout();
+    QWidget * wgt = new QWidget;
+    initStackLayout();
+    wgt->setLayout(stack_layout);
+    qDebug()<<"what?";
+    setCentralWidget(wgt);
 
     view_order_accauning.setModel(&model_order_accauning);
     view_operation_status.setModel(&model_operation_status);
@@ -61,9 +67,139 @@ MainWindow::MainWindow(QWidget *parent)
     view_sizes.setModel(&model_sizes);
     view_operations.setModel(&model_operations);
     view_stocks.setModel(&model_stocks);
+
+    view_order_accauning1.setModel(&model_order_accauning1);
+    view_operation_status1.setModel(&model_operation_status1);
+    view_stock_status1.setModel(&model_stock_status1);
+    view_sizes1.setModel(&model_sizes1);
+    view_operations1.setModel(&model_operations1);
+    view_stocks1.setModel(&model_stocks1);
+    view_order_accauning2.setModel(&model_order_accauning2);
+
     connect(&view_operation_status,SIGNAL (doubleClicked(QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
+    connect(&view_operation_status1,SIGNAL (doubleClicked(QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
 
 }
+
+
+void MainWindow::initStackLayout(){
+
+    //админ
+    QGridLayout* layout0 = new QGridLayout();
+    layout0->addWidget(new QLabel("Учет заказов"),0,0,1,1);
+    layout0->addWidget(new QLabel("Состояние операций"),0,1,1,1);
+    layout0->addWidget(new QLabel("Состояние складов"),0,2,1,1);
+    layout0->addWidget(&view_order_accauning1,1,0,1,1);
+    layout0->addWidget(&view_operation_status1,1,1,1,1);
+    layout0->addWidget(&view_stock_status1,1,2,1,1);
+    layout0->addWidget(new QLabel("Размеры"),2,0,1,1);
+    layout0->addWidget(new QLabel("Операции"),2,1,1,1);
+    layout0->addWidget(new QLabel("Склады"),2,2,1,1);
+    layout0->addWidget(&view_sizes1,3,0,1,1);
+    layout0->addWidget(&view_operations1,3,1,1,1);
+    layout0->addWidget(&view_stocks1,3,2,1,1);
+    layout0->addWidget(&btn_add_order,4,0,1,1);
+    //layout.addWidget(&btn_add_order_from_file,5,0,1,1);
+    layout0->addWidget(&btn_remove_order,4,1,1,1);
+    layout0->addWidget(&btn_fill_materials_stock,4,2,1,1);
+    QWidget* wgt = new QWidget();
+    wgt->resize(this->size());
+
+    wgt->setLayout(layout0);
+    stack_layout->insertWidget(0,wgt);
+
+
+    //приемщик
+    QGridLayout* layout1 = new QGridLayout();
+    layout1->addWidget(new QLabel("Учет заказов"),0,0,1,1);
+    layout1->addWidget(new QLabel("Размеры"),0,1,1,1);
+    layout1->addWidget(&view_order_accauning,1,0,1,1);
+    layout1->addWidget(&view_sizes,1,1,1,1);
+    layout1->addWidget(&btn_remove_order1,2,0,1,1);
+    layout1->addWidget(&btn_add_order1,2,1,1,1);
+    QWidget* wgt1 = new QWidget();
+    wgt1->setLayout(layout1);
+    stack_layout->insertWidget(1,wgt1);
+
+
+    //сборщик
+    QGridLayout* layout2 = new QGridLayout();
+    layout2->addWidget(new QLabel("Состояние операций"),0,0,1,1);
+    layout2->addWidget(new QLabel("Операции"),0,1,1,1);
+    layout2->addWidget(&view_operation_status,1,0,1,1);
+    layout2->addWidget(&view_operations,1,1,1,1);
+    layout2->addWidget(&btn_remove_order2,2,0,1,1);
+    QWidget* wgt2 = new QWidget();
+    wgt2->setLayout(layout2);
+    stack_layout->insertWidget(2,wgt2);
+
+    //доставщик
+    QGridLayout* layout3 = new QGridLayout();
+    layout3->addWidget(new QLabel("Учет заказов"),0,0,1,1);
+    layout3->addWidget(&view_order_accauning2,1,0,1,1);
+    layout3->addWidget(&btn_remove_order3,2,0,1,1);
+    QWidget* wgt3 = new QWidget();
+    wgt3->setLayout(layout3);
+    stack_layout->insertWidget(3,wgt3);
+
+    //кладовщик
+    QGridLayout* layout4 = new QGridLayout();
+    layout4->addWidget(new QLabel("Состояние складов"),0,0,1,1);
+    layout4->addWidget(new QLabel("Склады"),0,1,1,1);
+    layout4->addWidget(&view_stock_status,1,0,1,1);
+    layout4->addWidget(&view_stocks,1,1,1,1);
+    layout4->addWidget(&btn_fill_materials_stock1,2,0,1,1);
+    QWidget* wgt4 = new QWidget();
+    wgt4->setLayout(layout4);
+    stack_layout->insertWidget(4,wgt4);
+}
+
+
+void MainWindow::setDisplayTables(const QString& role_name){
+
+
+    //если делать по феншую, то надо создать иерархие классов, с этими лейаутами, а потом вызывать их конструктор
+    if(role_name == "admin"){
+
+
+        qDebug()<<"admin";
+        stack_layout->setCurrentWidget(stack_layout->widget(0));
+
+    }
+
+    if(role_name == "Приемщик"){
+        stack_layout->setCurrentWidget(stack_layout->widget(1));
+    }
+
+    if(role_name == "Сборщик"){
+
+        stack_layout->setCurrentWidget(stack_layout->widget(2));
+    }
+
+
+    if(role_name == "Доставщик"){
+        stack_layout->setCurrentWidget(stack_layout->widget(3));
+
+      }
+
+    if(role_name == "Кладовщик"){
+        stack_layout->setCurrentWidget(stack_layout->widget(4));
+
+      }
+    emit need_update_view();
+
+}
+
+void MainWindow::slot_change_role(){
+    try {
+        setDisplayTables(roleInputDialog::getRole());
+        emit need_update_view();
+    } catch (...) {
+        qDebug()<<"something going wrong";
+    }
+
+}
+
 
 void MainWindow::slot_create_connect_form(){
 
@@ -88,7 +224,7 @@ void MainWindow::slot_connect_to_serv(){
         statusBar()->showMessage("ошибка открытия БД", 3000);
      }
     else {statusBar()->showMessage("БД открыта успешна", 3000);
-        emit need_update_view();
+        chooseRole->setDisabled(false);
     }
     connection_form->dck_formConnection->close();
 }
@@ -210,7 +346,7 @@ void MainWindow::slot_fill_materials_stock(const QString& stock,const QString& s
 }
 
 void MainWindow::slot_update_view(){
-   // qDebug()<<"\nneed update view";
+    qDebug()<<"\nneed update view";
     model_order_accauning.setQuery("select * from list",db);
     model_operations.setQuery("select * from operation",db);
     model_operation_status.setQuery("select * from operations",db);
@@ -218,11 +354,29 @@ void MainWindow::slot_update_view(){
     model_stocks.setQuery("select * from store",db);
     model_stock_status.setQuery("select * from storehouse",db);
 
+    model_order_accauning1.setQuery("select * from list",db);
+    model_operations1.setQuery("select * from operation",db);
+    model_operation_status1.setQuery("select * from operations",db);
+    model_sizes1.setQuery("select * from size",db);
+    model_stocks1.setQuery("select * from store",db);
+    model_stock_status1.setQuery("select * from storehouse",db);
+    model_order_accauning2.setQuery("select * from list",db);
+
     view_order_accauning.setColumnWidth(0, 100);
     view_order_accauning.setColumnWidth(1, 100);
     view_order_accauning.setColumnWidth(3, 20);
     view_order_accauning.setColumnWidth(4, 100);
 
+
+    view_order_accauning1.setColumnWidth(0, 100);
+    view_order_accauning1.setColumnWidth(1, 100);
+    view_order_accauning1.setColumnWidth(3, 20);
+    view_order_accauning1.setColumnWidth(4, 100);
+
+    view_order_accauning2.setColumnWidth(0, 100);
+    view_order_accauning2.setColumnWidth(1, 100);
+    view_order_accauning2.setColumnWidth(3, 20);
+    view_order_accauning2.setColumnWidth(4, 100);
 
 }
 
@@ -267,6 +421,7 @@ QString MainWindow::generate_order_number(){
     }while(order_list.contains(res));
     return res;
 }
+
 MainWindow::~MainWindow()
 {
     db.close();
