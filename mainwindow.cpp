@@ -158,9 +158,9 @@ void MainWindow::initStackLayout(){
     //приемщик
     QGridLayout* layout1 = new QGridLayout();
     layout1->addWidget(new QLabel("Учет заказов"),0,0);
-    layout1->addWidget(new QLabel("Размеры"),0,1);
-    layout1->addWidget(&view_order_accauning,1,0,1,1);
-    layout1->addWidget(&view_sizes,1,1,1,1);
+   // layout1->addWidget(new QLabel("Размеры"),0,1);
+    layout1->addWidget(&view_order_accauning,1,0,1,2);
+    //layout1->addWidget(&view_sizes,1,1,1,1);
     view_sizes.setMaximumWidth(300);
 
     layout1->addWidget(&btn_add_order1,2,0,1,1);
