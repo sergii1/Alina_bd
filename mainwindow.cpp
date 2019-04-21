@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug()<<"what?";
     setCentralWidget(wgt);
 
+    view_delivery.setModel(&model_delivery);
+    view_delivery1.setModel(&model_delivery1);
     view_order_accauning.setModel(&model_order_accauning);
     view_operation_status.setModel(&model_operation_status);
     view_stock_status.setModel(&model_stock_status);
@@ -86,37 +88,84 @@ void MainWindow::initStackLayout(){
 
     //админ
     QGridLayout* layout0 = new QGridLayout();
-    layout0->addWidget(new QLabel("Учет заказов"),0,0,1,1);
-    layout0->addWidget(new QLabel("Состояние операций"),0,1,1,1);
-    layout0->addWidget(new QLabel("Состояние складов"),0,2,1,1);
-    layout0->addWidget(&view_order_accauning1,1,0,1,1);
-    layout0->addWidget(&view_operation_status1,1,1,1,1);
-    layout0->addWidget(&view_stock_status1,1,2,1,1);
-    layout0->addWidget(new QLabel("Размеры"),2,0,1,1);
-    layout0->addWidget(new QLabel("Операции"),2,1,1,1);
-    layout0->addWidget(new QLabel("Склады"),2,2,1,1);
-    layout0->addWidget(&view_sizes1,3,0,1,1);
-    layout0->addWidget(&view_operations1,3,1,1,1);
-    layout0->addWidget(&view_stocks1,3,2,1,1);
-    layout0->addWidget(&btn_add_order,4,0,1,1);
+    view_operation_status1.setFixedWidth(450);
+    view_stock_status1.setFixedWidth(350);
+
+    view_sizes1.setFixedWidth(330);
+    view_operations1.setFixedWidth(350);
+    view_stocks1.setFixedWidth(400);
+
+    QHBoxLayout* hlayout1 = new QHBoxLayout();
+    QHBoxLayout* hlayout2 = new QHBoxLayout();
+    QHBoxLayout* hlayout3 = new QHBoxLayout();
+    QHBoxLayout* hlayout4 = new QHBoxLayout();
+    QHBoxLayout* hlayout5 = new QHBoxLayout();
+    QVBoxLayout* vlayout = new QVBoxLayout();
+
+    QLabel* lbl11 = new QLabel("Учет заказов");
+    QLabel* lbl12 = new QLabel("Состояние операций");
+    QLabel* lbl13 = new QLabel("Состояние складов");
+    lbl12->setFixedWidth(450);
+    lbl13->setFixedWidth(350);
+
+    hlayout1->addWidget(lbl11);
+    hlayout1->addWidget(lbl12);
+    hlayout1->addWidget(lbl13);
+
+    hlayout2->addWidget(&view_order_accauning1);
+    hlayout2->addWidget(&view_operation_status1);
+    hlayout2->addWidget(&view_stock_status1);
+
+
+    QLabel* lbl21 = new QLabel("Доставка");
+    QLabel* lbl22 = new QLabel("Размеры");
+    QLabel* lbl23 = new QLabel("Операции");
+    QLabel* lbl24 = new QLabel("Склады");
+    lbl22->setFixedWidth(330);
+    lbl23->setFixedWidth(350);
+    lbl24->setFixedWidth(400);
+
+
+    hlayout3->addWidget(lbl21);
+    hlayout3->addWidget(lbl22);
+    hlayout3->addWidget(lbl23);
+    hlayout3->addWidget(lbl24);
+
+    hlayout4->addWidget(&view_delivery);
+    hlayout4->addWidget(&view_sizes1);
+    hlayout4->addWidget(&view_operations1);
+    hlayout4->addWidget(&view_stocks1);
+
+    hlayout5->addWidget(&btn_add_order);
     //layout.addWidget(&btn_add_order_from_file,5,0,1,1);
-    layout0->addWidget(&btn_remove_order,4,1,1,1);
-    layout0->addWidget(&btn_fill_materials_stock,4,2,1,1);
+    hlayout5->addWidget(&btn_remove_order);
+    hlayout5->addWidget(&btn_fill_materials_stock);
+
+    vlayout->addLayout(hlayout1);
+    vlayout->addLayout(hlayout2);
+    vlayout->addLayout(hlayout3);
+    vlayout->addLayout(hlayout4);
+    vlayout->addLayout(hlayout5);
+
+
     QWidget* wgt = new QWidget();
     wgt->resize(this->size());
 
-    wgt->setLayout(layout0);
+    wgt->setLayout(vlayout);
     stack_layout->insertWidget(0,wgt);
 
 
     //приемщик
     QGridLayout* layout1 = new QGridLayout();
-    layout1->addWidget(new QLabel("Учет заказов"),0,0,1,1);
-    layout1->addWidget(new QLabel("Размеры"),0,1,1,1);
+    layout1->addWidget(new QLabel("Учет заказов"),0,0);
+    layout1->addWidget(new QLabel("Размеры"),0,1);
     layout1->addWidget(&view_order_accauning,1,0,1,1);
     layout1->addWidget(&view_sizes,1,1,1,1);
-    layout1->addWidget(&btn_remove_order1,2,0,1,1);
-    layout1->addWidget(&btn_add_order1,2,1,1,1);
+    view_sizes.setMaximumWidth(300);
+
+    layout1->addWidget(&btn_add_order1,2,0,1,1);
+    layout1->addWidget(&btn_remove_order1,2,1,1,1);
+
     QWidget* wgt1 = new QWidget();
     wgt1->setLayout(layout1);
     stack_layout->insertWidget(1,wgt1);
@@ -128,6 +177,7 @@ void MainWindow::initStackLayout(){
     layout2->addWidget(new QLabel("Операции"),0,1,1,1);
     layout2->addWidget(&view_operation_status,1,0,1,1);
     layout2->addWidget(&view_operations,1,1,1,1);
+    view_operations.setMaximumWidth(300);
     layout2->addWidget(&btn_remove_order2,2,0,1,1);
     QWidget* wgt2 = new QWidget();
     wgt2->setLayout(layout2);
@@ -136,7 +186,7 @@ void MainWindow::initStackLayout(){
     //доставщик
     QGridLayout* layout3 = new QGridLayout();
     layout3->addWidget(new QLabel("Учет заказов"),0,0,1,1);
-    layout3->addWidget(&view_order_accauning2,1,0,1,1);
+    layout3->addWidget(&view_delivery1,1,0,1,1);
     layout3->addWidget(&btn_remove_order3,2,0,1,1);
     QWidget* wgt3 = new QWidget();
     wgt3->setLayout(layout3);
@@ -160,8 +210,6 @@ void MainWindow::setDisplayTables(const QString& role_name){
 
     //если делать по феншую, то надо создать иерархие классов, с этими лейаутами, а потом вызывать их конструктор
     if(role_name == "admin"){
-
-
         qDebug()<<"admin";
         stack_layout->setCurrentWidget(stack_layout->widget(0));
 
@@ -241,8 +289,8 @@ void MainWindow::slot_create_add_order_form(){
 
     add_order_form = new cls_add_order_form(size_list);
     add_order_form->show();
-    connect(add_order_form,SIGNAL(need_add_order(const QString&, const QString&,const QString&)),
-            this,SLOT(slot_add_order(const QString&,const QString&,const QString&)) );
+    connect(add_order_form,SIGNAL(need_add_order(const QString&, const QString&,const QString&,const QString&, const QString&)),
+            this,SLOT(slot_add_order(const QString&,const QString&,const QString&, const QString&,const QString&)) );
     statusBar()->showMessage("Добавление заказа");
     }
     else statusBar()->showMessage("Ошибка, проверьте подключене к базе данных",3000);
@@ -250,11 +298,11 @@ void MainWindow::slot_create_add_order_form(){
 
 
 //добавление заказа надо тестить
-void MainWindow::slot_add_order(const QString& date, const QString& size,const QString& comment){
+void MainWindow::slot_add_order(const QString& date, const QString& name,const QString& adres,const QString& phone ,const QString& size){
     statusBar()->clearMessage();
     QString number = generate_order_number();
-    QString cmd = "insert into list(number, data, comment, size, condition)"
-                  "values('"+number+"','" +date+"','"+ comment+"',"+size +", 'inprocess');";
+    QString cmd = "insert into list(number, data, name, adress, phone, size, status)"
+                  "values('"+number+"','" +date+"','"+ name+"','"+ adres +"','"+phone+"',"+size +", 'inprocess');";
     qDebug()<<"cmd = "<<cmd;
 
     QSqlQuery query = db.exec(cmd);
@@ -353,6 +401,8 @@ void MainWindow::slot_update_view(){
     model_sizes.setQuery("select * from size",db);
     model_stocks.setQuery("select * from store",db);
     model_stock_status.setQuery("select * from storehouse",db);
+    model_delivery.setQuery("select * from delivery");
+    model_delivery1.setQuery("select * from delivery");
 
     model_order_accauning1.setQuery("select * from list",db);
     model_operations1.setQuery("select * from operation",db);
@@ -362,21 +412,6 @@ void MainWindow::slot_update_view(){
     model_stock_status1.setQuery("select * from storehouse",db);
     model_order_accauning2.setQuery("select * from list",db);
 
-    view_order_accauning.setColumnWidth(0, 100);
-    view_order_accauning.setColumnWidth(1, 100);
-    view_order_accauning.setColumnWidth(3, 20);
-    view_order_accauning.setColumnWidth(4, 100);
-
-
-    view_order_accauning1.setColumnWidth(0, 100);
-    view_order_accauning1.setColumnWidth(1, 100);
-    view_order_accauning1.setColumnWidth(3, 20);
-    view_order_accauning1.setColumnWidth(4, 100);
-
-    view_order_accauning2.setColumnWidth(0, 100);
-    view_order_accauning2.setColumnWidth(1, 100);
-    view_order_accauning2.setColumnWidth(3, 20);
-    view_order_accauning2.setColumnWidth(4, 100);
 
 }
 

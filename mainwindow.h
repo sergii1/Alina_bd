@@ -29,7 +29,9 @@ private:
     QTableView view_sizes;
     QTableView view_operations;
     QTableView view_stocks;
+    QTableView view_delivery;
 
+    QTableView view_delivery1;
     QTableView view_order_accauning1;
     QTableView view_operation_status1;
     QTableView view_stock_status1;
@@ -44,6 +46,8 @@ private:
     QSqlQueryModel model_sizes;
     QSqlQueryModel model_operations;
     QSqlQueryModel model_stocks;
+    QSqlQueryModel model_delivery;
+    QSqlQueryModel model_delivery1;
 
     QSqlQueryModel model_order_accauning1;
     QSqlQueryModel model_operation_status1;
@@ -74,6 +78,7 @@ private:
     cls_fill_materials_stock_from* fill_materials_stock_from;
     QString generate_order_number();
 
+    void setColumnSizes();
     void setDisplayTables(const QString& role_name);
     void initStackLayout();
 signals:
@@ -89,7 +94,7 @@ private slots:
     //void slot_add_order_from_file();
     void slot_create_fill_materials_stock_form();
 
-    void slot_add_order(const QString&,const QString&,const QString&);
+    void slot_add_order(const QString&,const QString&,const QString&, const QString&,const QString&);
     void slot_remove_order(const QString&);
     void slot_fill_materials_stock(const QString& ,const QString& ,const QString&);
 

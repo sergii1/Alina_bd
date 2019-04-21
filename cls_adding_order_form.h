@@ -11,14 +11,15 @@ public:
     explicit cls_add_order_form(QStringList& size_list,QWidget *parent = nullptr);
 
 signals:
-    void need_add_order(const QString&, const QString&,const QString&);
+    void need_add_order(const QString&, const QString&,const QString&, const QString&, const QString&);
 
 private:
     QLineEdit date;
     QComboBox size;
-    QLineEdit name;
-    QLineEdit surname;
+    QLineEdit fio;
     QLineEdit phone;
+    QLineEdit adres;
+
     QPushButton submit;
     QVBoxLayout layout;
     QDockWidget* dck_wgt;
