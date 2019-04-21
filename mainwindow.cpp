@@ -78,6 +78,23 @@ MainWindow::MainWindow(QWidget *parent)
     view_stocks1.setModel(&model_stocks1);
     view_order_accauning2.setModel(&model_order_accauning2);
 
+    view_delivery.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_delivery1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_order_accauning.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_operation_status.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_stock_status.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_sizes.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_operations.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_stocks.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    view_order_accauning1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_operation_status1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_stock_status1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_sizes1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_operations1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_stocks1.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_order_accauning2.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     connect(&view_operation_status,SIGNAL (doubleClicked(QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
     connect(&view_operation_status1,SIGNAL (doubleClicked(QModelIndex)), this, SLOT (slot_change_order_status(QModelIndex)));
 
@@ -412,7 +429,41 @@ void MainWindow::slot_update_view(){
     model_stock_status1.setQuery("select * from storehouse",db);
     model_order_accauning2.setQuery("select * from list",db);
 
+    setColumnSizes();
 
+}
+
+void MainWindow::setColumnSizes(){
+
+
+
+    int width1 =  view_order_accauning.rect().width()-50;
+    view_order_accauning.setColumnWidth(0,width1*10/100);
+    view_order_accauning.setColumnWidth(1,width1*10/100);
+    view_order_accauning.setColumnWidth(2,width1*20/100);
+    view_order_accauning.setColumnWidth(3,width1*20/100);
+    view_order_accauning.setColumnWidth(4,width1*20/100);
+    view_order_accauning.setColumnWidth(5,width1*5/100);
+    view_order_accauning.setColumnWidth(6,width1*15/100);
+
+    int width2 =  view_order_accauning2.rect().width()-50;
+    view_order_accauning2.setColumnWidth(0,width2*10/100);
+    view_order_accauning2.setColumnWidth(1,width2*10/100);
+    view_order_accauning2.setColumnWidth(2,width2*20/100);
+    view_order_accauning2.setColumnWidth(3,width2*20/100);
+    view_order_accauning2.setColumnWidth(4,width2*20/100);
+    view_order_accauning2.setColumnWidth(5,width2*5/100);
+    view_order_accauning2.setColumnWidth(6,width2*15/100);
+
+
+    int width3 =  view_order_accauning1.rect().width()-50;
+    view_order_accauning1.setColumnWidth(0,width3*10/100);
+    view_order_accauning1.setColumnWidth(1,width3*10/100);
+    view_order_accauning1.setColumnWidth(2,width3*20/100);
+    view_order_accauning1.setColumnWidth(3,width3*20/100);
+    view_order_accauning1.setColumnWidth(4,width3*20/100);
+    view_order_accauning1.setColumnWidth(5,width3*5/100);
+    view_order_accauning1.setColumnWidth(6,width3*15/100);
 }
 
 //надо допилить и протестить двойной щелчек
