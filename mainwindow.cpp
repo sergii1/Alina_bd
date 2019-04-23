@@ -194,8 +194,8 @@ void MainWindow::initStackLayout(){
     layout2->addWidget(new QLabel("Операции"),0,1,1,1);
     layout2->addWidget(&view_operation_status,1,0,1,1);
     layout2->addWidget(&view_operations,1,1,1,1);
-    view_operations.setMaximumWidth(300);
-    layout2->addWidget(&btn_remove_order2,2,0,1,1);
+    //view_operations.setMinimumWidth(350);
+    //layout2->addWidget(&btn_remove_order2,2,0,1,1);
     QWidget* wgt2 = new QWidget();
     wgt2->setLayout(layout2);
     stack_layout->insertWidget(2,wgt2);
@@ -437,7 +437,7 @@ void MainWindow::setColumnSizes(){
 
 
 
-    int width1 =  view_order_accauning.rect().width()-50;
+    int width1 =  view_order_accauning.rect().width();
     view_order_accauning.setColumnWidth(0,width1*10/100);
     view_order_accauning.setColumnWidth(1,width1*10/100);
     view_order_accauning.setColumnWidth(2,width1*20/100);
@@ -446,7 +446,7 @@ void MainWindow::setColumnSizes(){
     view_order_accauning.setColumnWidth(5,width1*5/100);
     view_order_accauning.setColumnWidth(6,width1*15/100);
 
-    int width2 =  view_order_accauning2.rect().width()-50;
+    int width2 =  view_order_accauning2.rect().width();
     view_order_accauning2.setColumnWidth(0,width2*10/100);
     view_order_accauning2.setColumnWidth(1,width2*10/100);
     view_order_accauning2.setColumnWidth(2,width2*20/100);
@@ -456,7 +456,7 @@ void MainWindow::setColumnSizes(){
     view_order_accauning2.setColumnWidth(6,width2*15/100);
 
 
-    int width3 =  view_order_accauning1.rect().width()-50;
+    int width3 =  view_order_accauning1.rect().width();
     view_order_accauning1.setColumnWidth(0,width3*10/100);
     view_order_accauning1.setColumnWidth(1,width3*10/100);
     view_order_accauning1.setColumnWidth(2,width3*20/100);
@@ -464,6 +464,15 @@ void MainWindow::setColumnSizes(){
     view_order_accauning1.setColumnWidth(4,width3*20/100);
     view_order_accauning1.setColumnWidth(5,width3*5/100);
     view_order_accauning1.setColumnWidth(6,width3*15/100);
+
+    int width4 =  view_operations.rect().width();
+    view_operations.setColumnWidth(0,width4*30/100);
+    view_operations.setColumnWidth(1,width4*70/100);
+
+    int width5 =  view_operations1.rect().width();
+    view_operations1.setColumnWidth(0,width5*30/100);
+    view_operations1.setColumnWidth(1,width5*70/100);
+
 }
 
 //надо допилить и протестить двойной щелчек
